@@ -1,9 +1,9 @@
 import cv2
 import torch
-from models.experimental import attempt_load
-from utils.general import non_max_suppression, scale_boxes
-from utils.plots import Annotator
-from utils.torch_utils import select_device
+from experimental import attempt_load
+from general import non_max_suppression, scale_boxes
+from plots import Annotator
+from torch_utils import select_device
 import time  # For cooldown tracking
 import pyttsx3  # For text-to-speech
 import threading  # For running TTS in a separate thread
@@ -33,7 +33,7 @@ tts_thread = threading.Thread(target=tts_worker)
 tts_thread.start()
 
 # Load the model
-weights = "D:\model_training\Real-Time-Traffic-Sign-Detection-main\Real-Time-Traffic-Sign-Detection-main\Model\Model\weights\\best.pt"  # Path to the pre-trained weights
+weights = "modelpath"  # Path to the pre-trained weights
 device = select_device("")  # Use GPU if available, otherwise CPU
 model = attempt_load(weights, device)  # Load the model
 stride = int(model.stride.max())  # Model stride
