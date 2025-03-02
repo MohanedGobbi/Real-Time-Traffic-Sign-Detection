@@ -26,5 +26,7 @@ The script will access the camera feed, detect traffic signs, and draw bounding 
 Detected signs are announced using text-to-speech.
 Press 'q' to exit the program.
 
+link for the model : https://mega.nz/file/QdIyEYKS#H8TWYlz5gEm1OAir3XSmOtzOEZcPAWeaKu8JuhX35h8
+
 License
 This project is licensed under the MIT License.
