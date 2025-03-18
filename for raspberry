@@ -33,22 +33,22 @@ def tts_worker():
 tts_thread = threading.Thread(target=tts_worker)
 tts_thread.start()
 
-# Load the model
+# Load the YOLOv5 model
 weights = "/home/admin/Downloads/best.pt"  # Path to the pre-trained weights
 device = select_device("")  # Use GPU if available, otherwise CPU
 model = attempt_load(weights, device)  # Load the model
 stride = int(model.stride.max())  # Model stride
 names = model.module.names if hasattr(model, "module") else model.names  # Class names
 
-# Open the camera
-cap = cv2.VideoCapture(0)  # Use 0 for the default camera
-if not cap.isOpened():
-    print("Error: Could not open camera.")
-    exit()
-
 # Set the input size for the model
 imgsz = 640  # YOLOv5 input size
 imgsz = check_img_size(imgsz, s=stride)  # Ensure imgsz is a multiple of stride
+
+# Initialize Picamera2
+from picamera2 import Picamera2
+picam2 = Picamera2()
+picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (640, 480)}))
+picam2.start()
 
 # Create a resizable window
 cv2.namedWindow("Traffic Sign Detection", cv2.WINDOW_NORMAL)
@@ -61,13 +61,11 @@ last_detection_time = {}
 cooldown = 20
 
 while True:
-    # Read a frame from the camera
-    ret, frame = cap.read()
-    if not ret:
-        print("Error: Could not read frame.")
-        break
+    # Capture a frame from Picamera2
+    frame = picam2.capture_array()
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert to BGR (OpenCV uses BGR)
 
-    # Preprocess the frame
+    # Preprocess the frame for YOLOv5
     img = cv2.resize(frame, (imgsz, imgsz), interpolation=cv2.INTER_LINEAR)
     img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, HWC to CHW
     img = torch.from_numpy(img).to(device)  # Convert to tensor
@@ -107,8 +105,8 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Release the camera and close windows
-cap.release()
+# Release resources
+picam2.stop()
 cv2.destroyAllWindows()
 
 # Stop the TTS worker thread
