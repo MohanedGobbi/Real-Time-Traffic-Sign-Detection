@@ -10,7 +10,7 @@ Features
 Installation
 Clone this repository:
 
-git clone https://github.com/yourusername/traffic-sign-detection.git  
+git clone[ https://github.com/MohanedGobbi/Real-Time-Traffic-Sign-Detection 
 cd traffic-sign-detection
 
 Install dependencies:
